@@ -72,7 +72,24 @@ def get_supported_warehouses() -> list[str]:
 # Auto-register connectors when imported (lazy loading to avoid circular imports)
 def _lazy_register_connectors():
     """Lazy register connectors to avoid circular imports."""
-    # This will be called when connectors are imported
-    # Actual registration happens in each connector's __init__.py
-    pass
+    # Register Snowflake connector if available
+    try:
+        from csi.connectors.snowflake_connector import SnowflakeConnector
+        register_connector("SNOWFLAKE", SnowflakeConnector)
+    except ImportError:
+        pass  # snowflake-connector-python not installed
+
+    # Register BigQuery connector if available
+    try:
+        from csi.connectors.bigquery_connector import BigQueryConnector
+        register_connector("BIGQUERY", BigQueryConnector)
+    except ImportError:
+        pass  # google-cloud-bigquery not installed
+
+    # Register Databricks connector if available
+    try:
+        from csi.connectors.databricks_connector import DatabricksConnector
+        register_connector("DATABRICKS", DatabricksConnector)
+    except ImportError:
+        pass  # databricks-sql-connector not installed
 
